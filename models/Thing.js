@@ -32,7 +32,6 @@ class Thing {
     return rows;
   }
   static async findByPk(pkValue) {
-
     const { rows } = await
       this.client.query(`
     SELECT * 
@@ -41,9 +40,28 @@ class Thing {
     `)
     return rows;
   }
-  static async updateByPk() { }
-  static async deleteByPk(pkValue) {
 
+  static async updateByPk(pkValue, values) {
+    const insertAttrs = Object.entries(this.attributes)
+      .filter(([attr, domen]) => attr in values)
+      .map(([attr]) => attr);
+    const updateStr = insertAttrs.map((attr) => {
+      const domen = values[attr];
+      const domenPrepare = typeof domen === 'string' ? `'${domen}'` : domen;
+      return `"${attr}"=${domenPrepare}`;
+    }).join(',')
+    const { rows } = await
+      this.client.query(`
+      UPDATE ${this.tablename}
+      SET ${updateStr}, "updatedAt"='${new Date().toISOString()}'
+      WHERE "id"= ${pkValue}
+      RETURNING *
+  `);
+    return rows;
+  }
+
+
+  static async deleteByPk(pkValue) {
     const { rows } = await
       this.client.query(`
     DELETE

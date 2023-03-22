@@ -15,11 +15,8 @@ process.on('beforeExit', () => {
 })
 
 
-
-
 const db = {
   client,
- 
 };
 
 fs.readdirSync(__dirname)

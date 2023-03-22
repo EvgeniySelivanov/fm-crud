@@ -5,3 +5,7 @@ CREATE TABLE "things"(
   "createdAt" timestamp NOT NULL DEFAULT current_timestamp
 );
 
+UPDATE "things"
+SET "body"='new body',"updatedAt"=new Date()
+WHERE "id"=2
+RETURNING *;
